@@ -50,6 +50,11 @@ namespace GeometricStrategy
                         return false;
                     return assignedResource.Harvest(harvestAmount, wallet) > 0;
 
+                case ProfessionType.Carpenter:
+                    if (assignedResource == null || assignedResource.IsDepleted) return false;
+                    if (assignedResource.ResourceType != ResourceType.Wood) return false;
+                    return assignedResource.Harvest(harvestAmount, wallet) > 0;
+
                 case ProfessionType.Farmer:
                     wallet.Add(ResourceType.Food, 2);
                     return true;
@@ -58,9 +63,6 @@ namespace GeometricStrategy
                     if (!wallet.Spend(ResourceType.Food, 2)) return false;
                     wallet.Add(ResourceType.Horse, 1);
                     return true;
-
-                case ProfessionType.Carpenter:
-                    return crafting != null && crafting.Craft(CraftableType.Wall);
 
                 case ProfessionType.Blacksmith:
                     return crafting != null && crafting.Craft(CraftableType.BasicWeapon);

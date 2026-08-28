@@ -13,6 +13,7 @@ namespace GeometricStrategy.Editor
             public GameObject root;
             public ResourceWallet wallet;
             public CraftedInventory inventory;
+            public LivestockInventory livestock;
             public CraftingSystem crafting;
         }
 
@@ -56,7 +57,6 @@ namespace GeometricStrategy.Editor
             CreateProfession(workers.transform, ProfessionType.Blacksmith, playerOne, null, new Vector2(-2.6f, -4.9f));
             CreateProfession(workers.transform, ProfessionType.Weaponsmith, playerOne, null, new Vector2(-1.1f, -4.9f));
 
-            // Player Two receives the same profession set so the faction architecture is symmetrical.
             CreateProfession(workers.transform, ProfessionType.Carpenter, playerTwo, wood, new Vector2(8.6f, -4.9f));
             CreateProfession(workers.transform, ProfessionType.Miner, playerTwo, metal, new Vector2(7.1f, -4.9f));
             CreateProfession(workers.transform, ProfessionType.Farmer, playerTwo, null, new Vector2(5.6f, -4.9f));
@@ -66,7 +66,7 @@ namespace GeometricStrategy.Editor
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(scene);
-            Debug.Log("[GeometricStrategy] MVP scene generated. Save the scene, then enter Play Mode. Left click selects Player One units; right click moves them.");
+            Debug.Log("[GeometricStrategy] MVP scene generated. Save the scene, then enter Play Mode. Left click selects units; right click moves them; Tab switches Player One / Player Two control.");
         }
 
         private static void CreateCamera(Transform parent)
@@ -91,6 +91,7 @@ namespace GeometricStrategy.Editor
             ResourceWallet wallet = go.AddComponent<ResourceWallet>();
             wallet.SetOwner(faction);
             CraftedInventory inventory = go.AddComponent<CraftedInventory>();
+            LivestockInventory livestock = go.AddComponent<LivestockInventory>();
             CraftingSystem crafting = go.AddComponent<CraftingSystem>();
             crafting.SetWallet(wallet);
             crafting.SetInventory(inventory);
@@ -100,6 +101,7 @@ namespace GeometricStrategy.Editor
                 root = go,
                 wallet = wallet,
                 inventory = inventory,
+                livestock = livestock,
                 crafting = crafting
             };
         }
@@ -155,7 +157,7 @@ namespace GeometricStrategy.Editor
             shape.Configure(ProfessionSymbol(profession), ProfessionColor(profession), 0.48f);
 
             ProfessionWorker worker = go.AddComponent<ProfessionWorker>();
-            worker.Configure(profession, economy.wallet, economy.crafting, resource);
+            worker.Configure(profession, economy.wallet, economy.crafting, resource, economy.livestock, AnimalType.Horse);
         }
 
         private static GeometricSymbol ProfessionSymbol(ProfessionType profession)

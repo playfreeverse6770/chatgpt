@@ -9,10 +9,11 @@ namespace GeometricStrategy
         [SerializeField] private UnitArchetype archetype = UnitArchetype.Soldier;
         [SerializeField] private UnitLevel level = UnitLevel.Level1;
         [SerializeField] private FactionId faction = FactionId.PlayerOne;
-        [SerializeField] private float selectionScale = 1.12f;
+        [SerializeField] private float selectionScale = 1.08f;
 
         private GeometricShapeRenderer shapeRenderer;
         private GeometricEmblemRenderer emblemRenderer;
+        private GeometricSelectionRing selectionRing;
         private CircleCollider2D clickCollider;
         private UnitStats stats;
         private float currentHealth;
@@ -31,6 +32,9 @@ namespace GeometricStrategy
         public float CurrentHealth => currentHealth;
         public bool IsAlive => currentHealth > 0f;
         public bool IsKing => archetype == UnitArchetype.King;
+        public bool IsSelected => selected;
+        public bool HasMoveTarget => hasMoveTarget;
+        public Vector3 MoveTarget => moveTarget;
 
         private void Awake()
         {
@@ -47,6 +51,7 @@ namespace GeometricStrategy
             if (delta.sqrMagnitude <= 0.02f)
             {
                 hasMoveTarget = false;
+                Changed?.Invoke(this);
                 return;
             }
 
@@ -66,11 +71,13 @@ namespace GeometricStrategy
         {
             moveTarget = new Vector3(worldPosition.x, worldPosition.y, transform.position.z);
             hasMoveTarget = true;
+            Changed?.Invoke(this);
         }
 
         public void StopMoving()
         {
             hasMoveTarget = false;
+            Changed?.Invoke(this);
         }
 
         public bool TryAttack(GeometricUnit target)
@@ -124,6 +131,8 @@ namespace GeometricStrategy
             if (selected == value) return;
             selected = value;
             transform.localScale = Vector3.one * (selected ? selectionScale : 1f);
+            if (selectionRing != null) selectionRing.SetVisible(selected);
+            Changed?.Invoke(this);
         }
 
         private void EnsurePresentation()
@@ -143,6 +152,17 @@ namespace GeometricStrategy
             emblemRenderer = emblemTransform.GetComponent<GeometricEmblemRenderer>();
             if (emblemRenderer == null) emblemRenderer = emblemTransform.gameObject.AddComponent<GeometricEmblemRenderer>();
 
+            Transform ringTransform = transform.Find("SelectionRing");
+            if (ringTransform == null)
+            {
+                var ringObject = new GameObject("SelectionRing");
+                ringTransform = ringObject.transform;
+                ringTransform.SetParent(transform, false);
+            }
+            selectionRing = ringTransform.GetComponent<GeometricSelectionRing>();
+            if (selectionRing == null) selectionRing = ringTransform.gameObject.AddComponent<GeometricSelectionRing>();
+            selectionRing.SetVisible(selected);
+
             clickCollider = GetComponent<CircleCollider2D>();
             if (clickCollider == null) clickCollider = gameObject.AddComponent<CircleCollider2D>();
             clickCollider.radius = 0.65f;
@@ -156,7 +176,9 @@ namespace GeometricStrategy
             float radius = archetype == UnitArchetype.King ? 0.85f : 0.62f;
             shapeRenderer.Configure(GeometricGameRules.UnitSymbol(archetype), GeometricGameRules.LevelColor(level), radius);
             emblemRenderer.ConfigureFaction(faction);
+            if (selectionRing != null) selectionRing.SetRadius(radius + 0.2f);
             name = faction + "_" + archetype + "_L" + (int)level;
+            Changed?.Invoke(this);
         }
     }
 }

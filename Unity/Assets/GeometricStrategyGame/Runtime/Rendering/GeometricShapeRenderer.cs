@@ -55,12 +55,23 @@ namespace GeometricStrategy
             if (runtimeMaterial == null)
             {
                 Shader shader = Shader.Find("Sprites/Default");
+                if (shader == null) shader = Shader.Find("Universal Render Pipeline/Unlit");
                 if (shader == null) shader = Shader.Find("Unlit/Color");
+
+                if (shader == null)
+                {
+                    Debug.LogError("[GeometricStrategy] No compatible unlit shader was found. Use a standard Unity 2D/Built-In or URP project.");
+                    return;
+                }
+
                 runtimeMaterial = new Material(shader) { name = "GeometricRuntimeMaterial" };
                 meshRenderer.sharedMaterial = runtimeMaterial;
             }
 
-            runtimeMaterial.color = fillColor;
+            if (runtimeMaterial.HasProperty("_BaseColor"))
+                runtimeMaterial.SetColor("_BaseColor", fillColor);
+            if (runtimeMaterial.HasProperty("_Color"))
+                runtimeMaterial.SetColor("_Color", fillColor);
         }
     }
 }

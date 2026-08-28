@@ -51,10 +51,16 @@ namespace GeometricStrategy
     public sealed class CraftingSystem : MonoBehaviour
     {
         [SerializeField] private ResourceWallet wallet;
+        [SerializeField] private CraftedInventory inventory;
 
         public void SetWallet(ResourceWallet value)
         {
             wallet = value;
+        }
+
+        public void SetInventory(CraftedInventory value)
+        {
+            inventory = value;
         }
 
         public bool CanCraft(CraftableType type)
@@ -79,6 +85,8 @@ namespace GeometricStrategy
 
             if (recipe.outputAmount > 0)
                 wallet.Add(recipe.outputResource, recipe.outputAmount);
+            else if (inventory != null)
+                inventory.Add(type, 1);
 
             if (GeometricAudioService.Instance != null)
                 GeometricAudioService.Instance.Play(type == CraftableType.Coin ? AudioCue.Coin : AudioCue.Build, transform.position);

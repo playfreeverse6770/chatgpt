@@ -80,7 +80,7 @@ namespace GeometricStrategy.Editor
             camera.orthographic = true;
             camera.orthographicSize = 8.2f;
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color32(28, 31, 38, 255);
+            camera.backgroundColor = GeometricPalette.BoardBackground;
             go.AddComponent<AudioListener>();
         }
 
@@ -176,12 +176,12 @@ namespace GeometricStrategy.Editor
         {
             switch (profession)
             {
-                case ProfessionType.Blacksmith: return new Color32(65, 70, 80, 255);
-                case ProfessionType.Farmer: return new Color32(110, 170, 70, 255);
-                case ProfessionType.Carpenter: return new Color32(150, 95, 45, 255);
-                case ProfessionType.Miner: return new Color32(105, 110, 120, 255);
-                case ProfessionType.Weaponsmith: return new Color32(165, 55, 55, 255);
-                case ProfessionType.AnimalBreeder: return new Color32(45, 145, 145, 255);
+                case ProfessionType.Blacksmith: return GeometricPalette.Blacksmith;
+                case ProfessionType.Farmer: return GeometricPalette.Farmer;
+                case ProfessionType.Carpenter: return GeometricPalette.Carpenter;
+                case ProfessionType.Miner: return GeometricPalette.Miner;
+                case ProfessionType.Weaponsmith: return GeometricPalette.Weaponsmith;
+                case ProfessionType.AnimalBreeder: return GeometricPalette.AnimalBreeder;
                 default: return Color.white;
             }
         }

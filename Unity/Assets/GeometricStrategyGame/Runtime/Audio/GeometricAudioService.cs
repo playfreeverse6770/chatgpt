@@ -22,6 +22,7 @@ namespace GeometricStrategy
         [SerializeField] private bool useProceduralFallback = true;
 
         private readonly Dictionary<AudioCue, AudioClip> fallbackCache = new Dictionary<AudioCue, AudioClip>();
+        private AudioSource playbackSource;
 
         private void Awake()
         {
@@ -30,7 +31,13 @@ namespace GeometricStrategy
                 Destroy(gameObject);
                 return;
             }
+
             Instance = this;
+            playbackSource = GetComponent<AudioSource>();
+            if (playbackSource == null) playbackSource = gameObject.AddComponent<AudioSource>();
+            playbackSource.playOnAwake = false;
+            playbackSource.loop = false;
+            playbackSource.spatialBlend = 0f;
         }
 
         private void OnDestroy()
@@ -59,8 +66,8 @@ namespace GeometricStrategy
             if (clip == null && useProceduralFallback)
                 clip = GetFallback(cue);
 
-            if (clip != null)
-                AudioSource.PlayClipAtPoint(clip, position, volume);
+            if (clip != null && playbackSource != null)
+                playbackSource.PlayOneShot(clip, volume);
         }
 
         private AudioClip GetFallback(AudioCue cue)

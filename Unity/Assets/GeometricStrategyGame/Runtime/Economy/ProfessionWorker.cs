@@ -8,6 +8,8 @@ namespace GeometricStrategy
         [SerializeField] private ResourceWallet wallet;
         [SerializeField] private CraftingSystem crafting;
         [SerializeField] private ResourceNode assignedResource;
+        [SerializeField] private LivestockInventory livestock;
+        [SerializeField] private AnimalType breedingAnimal = AnimalType.Horse;
         [SerializeField, Min(0.25f)] private float workInterval = 2f;
         [SerializeField, Min(1)] private int harvestAmount = 3;
 
@@ -17,7 +19,7 @@ namespace GeometricStrategy
 
         private void Start()
         {
-            EnsureEmblem();
+            EnsureEmblems();
         }
 
         private void Update()
@@ -27,13 +29,21 @@ namespace GeometricStrategy
             WorkOnce();
         }
 
-        public void Configure(ProfessionType role, ResourceWallet targetWallet, CraftingSystem craftingSystem = null, ResourceNode resource = null)
+        public void Configure(
+            ProfessionType role,
+            ResourceWallet targetWallet,
+            CraftingSystem craftingSystem = null,
+            ResourceNode resource = null,
+            LivestockInventory livestockInventory = null,
+            AnimalType animal = AnimalType.Horse)
         {
             profession = role;
             wallet = targetWallet;
             crafting = craftingSystem;
             assignedResource = resource;
-            EnsureEmblem();
+            livestock = livestockInventory;
+            breedingAnimal = animal;
+            EnsureEmblems();
         }
 
         public bool WorkOnce()
@@ -60,8 +70,8 @@ namespace GeometricStrategy
                     return true;
 
                 case ProfessionType.AnimalBreeder:
-                    if (!wallet.Spend(ResourceType.Food, 2)) return false;
-                    wallet.Add(ResourceType.Horse, 1);
+                    if (livestock == null || !wallet.Spend(ResourceType.Food, 2)) return false;
+                    livestock.Add(breedingAnimal, breedingAnimal == AnimalType.Chicken ? 2 : 1);
                     return true;
 
                 case ProfessionType.Blacksmith:
@@ -76,20 +86,37 @@ namespace GeometricStrategy
             }
         }
 
-        private void EnsureEmblem()
+        private void EnsureEmblems()
         {
-            Transform emblem = transform.Find("ProfessionEmblem");
-            if (emblem == null)
+            Transform professionEmblem = transform.Find("ProfessionEmblem");
+            if (professionEmblem == null)
             {
                 var go = new GameObject("ProfessionEmblem");
-                emblem = go.transform;
-                emblem.SetParent(transform, false);
-                emblem.localPosition = new Vector3(0f, 0f, -0.08f);
+                professionEmblem = go.transform;
+                professionEmblem.SetParent(transform, false);
+                professionEmblem.localPosition = new Vector3(0f, 0f, -0.08f);
             }
 
-            GeometricEmblemRenderer renderer = emblem.GetComponent<GeometricEmblemRenderer>();
-            if (renderer == null) renderer = emblem.gameObject.AddComponent<GeometricEmblemRenderer>();
-            renderer.ConfigureProfession(profession, Color.white);
+            GeometricEmblemRenderer professionRenderer = professionEmblem.GetComponent<GeometricEmblemRenderer>();
+            if (professionRenderer == null) professionRenderer = professionEmblem.gameObject.AddComponent<GeometricEmblemRenderer>();
+            professionRenderer.ConfigureProfession(profession, Color.white);
+
+            if (wallet == null) return;
+
+            Transform ownerEmblem = transform.Find("OwnerEmblem");
+            if (ownerEmblem == null)
+            {
+                var go = new GameObject("OwnerEmblem");
+                ownerEmblem = go.transform;
+                ownerEmblem.SetParent(transform, false);
+            }
+
+            ownerEmblem.localPosition = new Vector3(0.28f, -0.28f, -0.1f);
+            ownerEmblem.localScale = Vector3.one * 0.42f;
+
+            GeometricEmblemRenderer ownerRenderer = ownerEmblem.GetComponent<GeometricEmblemRenderer>();
+            if (ownerRenderer == null) ownerRenderer = ownerEmblem.gameObject.AddComponent<GeometricEmblemRenderer>();
+            ownerRenderer.ConfigureFaction(wallet.Owner);
         }
     }
 }

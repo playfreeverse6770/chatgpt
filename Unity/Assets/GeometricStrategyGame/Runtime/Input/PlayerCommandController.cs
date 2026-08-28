@@ -6,8 +6,11 @@ namespace GeometricStrategy
     {
         [SerializeField] private FactionId controlledFaction = FactionId.PlayerOne;
         [SerializeField] private Camera worldCamera;
+        [SerializeField] private bool allowTabHotseatSwitch = true;
 
         private GeometricUnit selectedUnit;
+
+        public FactionId ControlledFaction => controlledFaction;
 
         private void Awake()
         {
@@ -18,11 +21,27 @@ namespace GeometricStrategy
         {
             if (worldCamera == null) return;
 
+            if (allowTabHotseatSwitch && Input.GetKeyDown(KeyCode.Tab))
+                SwitchPlayer();
+
             if (Input.GetMouseButtonDown(0))
                 SelectAtMouse();
 
             if (Input.GetMouseButtonDown(1) && selectedUnit != null)
                 selectedUnit.SetMoveTarget(MouseWorldPoint());
+        }
+
+        public void SetControlledFaction(FactionId faction)
+        {
+            if (!GeometricGameRules.IsPlayerFaction(faction)) return;
+            SetSelected(null);
+            controlledFaction = faction;
+        }
+
+        public void SwitchPlayer()
+        {
+            SetControlledFaction(controlledFaction == FactionId.PlayerOne ? FactionId.PlayerTwo : FactionId.PlayerOne);
+            Debug.Log("[GeometricStrategy] Active local player: " + controlledFaction);
         }
 
         private void SelectAtMouse()

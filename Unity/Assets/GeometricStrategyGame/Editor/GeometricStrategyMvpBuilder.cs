@@ -81,6 +81,7 @@ namespace GeometricStrategy.Editor
             camera.orthographicSize = 8.2f;
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color32(28, 31, 38, 255);
+            go.AddComponent<AudioListener>();
         }
 
         private static FactionEconomy CreateFactionEconomy(Transform parent, FactionId faction)

@@ -31,42 +31,45 @@ namespace GeometricStrategy.Editor
             CreateCamera(systems.transform);
 
             GameObject gameSystems = Child(systems, "GameSystems");
-            gameSystems.AddComponent<GeometricStrategyGameManager>();
+            GeometricStrategyGameManager manager = gameSystems.AddComponent<GeometricStrategyGameManager>();
             gameSystems.AddComponent<GeometricAudioService>();
-            gameSystems.AddComponent<PlayerCommandController>();
+            PlayerCommandController commands = gameSystems.AddComponent<PlayerCommandController>();
 
             FactionEconomy playerOne = CreateFactionEconomy(systems.transform, FactionId.PlayerOne);
             FactionEconomy playerTwo = CreateFactionEconomy(systems.transform, FactionId.PlayerTwo);
 
-            ResourceNode wood = CreateResource(resources.transform, ResourceType.Wood, new Vector2(-2.8f, 4.4f), 180);
-            ResourceNode stone = CreateResource(resources.transform, ResourceType.Stone, new Vector2(-0.9f, 4.4f), 180);
-            ResourceNode metal = CreateResource(resources.transform, ResourceType.Metal, new Vector2(1.0f, 4.4f), 140);
-            ResourceNode gold = CreateResource(resources.transform, ResourceType.Gold, new Vector2(2.9f, 4.4f), 100);
+            GeometricStrategyHud hud = gameSystems.AddComponent<GeometricStrategyHud>();
+            hud.Configure(commands, manager, playerOne.wallet, playerTwo.wallet);
+
+            ResourceNode wood = CreateResource(resources.transform, ResourceType.Wood, new Vector2(-3.6f, 4.2f), 180);
+            ResourceNode stone = CreateResource(resources.transform, ResourceType.Stone, new Vector2(-1.2f, 4.2f), 180);
+            ResourceNode metal = CreateResource(resources.transform, ResourceType.Metal, new Vector2(1.2f, 4.2f), 140);
+            ResourceNode gold = CreateResource(resources.transform, ResourceType.Gold, new Vector2(3.6f, 4.2f), 100);
 
             CreatePlayerArmy(units.transform, FactionId.PlayerOne, -1f);
             CreatePlayerArmy(units.transform, FactionId.PlayerTwo, 1f);
 
-            CreateRaider(units.transform, FactionId.WolfClan, UnitArchetype.Soldier, UnitLevel.Level2, new Vector2(0f, 6.2f));
-            CreateRaider(units.transform, FactionId.BearClan, UnitArchetype.Cavalry, UnitLevel.Level3, new Vector2(0f, -6.2f));
-            CreateRaider(units.transform, FactionId.EagleClan, UnitArchetype.Archer, UnitLevel.Level2, new Vector2(5.2f, 5.4f));
+            CreateRaider(units.transform, FactionId.WolfClan, UnitArchetype.Soldier, UnitLevel.Level2, new Vector2(0f, 6.1f));
+            CreateRaider(units.transform, FactionId.BearClan, UnitArchetype.Cavalry, UnitLevel.Level3, new Vector2(0f, -6.1f));
+            CreateRaider(units.transform, FactionId.EagleClan, UnitArchetype.Archer, UnitLevel.Level2, new Vector2(5.0f, 5.5f));
 
-            CreateProfession(workers.transform, ProfessionType.Carpenter, playerOne, wood, new Vector2(-8.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Miner, playerOne, stone, new Vector2(-7.1f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Farmer, playerOne, null, new Vector2(-5.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.AnimalBreeder, playerOne, null, new Vector2(-4.1f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Blacksmith, playerOne, null, new Vector2(-2.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Weaponsmith, playerOne, null, new Vector2(-1.1f, -4.9f));
+            CreateProfession(workers.transform, ProfessionType.Carpenter, playerOne, wood, new Vector2(-8.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Miner, playerOne, stone, new Vector2(-7.0f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Farmer, playerOne, null, new Vector2(-5.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.AnimalBreeder, playerOne, null, new Vector2(-4.0f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Blacksmith, playerOne, null, new Vector2(-2.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Weaponsmith, playerOne, null, new Vector2(-1.0f, -4.8f));
 
-            CreateProfession(workers.transform, ProfessionType.Carpenter, playerTwo, wood, new Vector2(8.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Miner, playerTwo, metal, new Vector2(7.1f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Farmer, playerTwo, null, new Vector2(5.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.AnimalBreeder, playerTwo, null, new Vector2(4.1f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Blacksmith, playerTwo, null, new Vector2(2.6f, -4.9f));
-            CreateProfession(workers.transform, ProfessionType.Weaponsmith, playerTwo, gold, new Vector2(1.1f, -4.9f));
+            CreateProfession(workers.transform, ProfessionType.Carpenter, playerTwo, wood, new Vector2(8.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Miner, playerTwo, metal, new Vector2(7.0f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Farmer, playerTwo, null, new Vector2(5.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.AnimalBreeder, playerTwo, null, new Vector2(4.0f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Blacksmith, playerTwo, null, new Vector2(2.5f, -4.8f));
+            CreateProfession(workers.transform, ProfessionType.Weaponsmith, playerTwo, gold, new Vector2(1.0f, -4.8f));
 
             Selection.activeGameObject = root;
             EditorSceneManager.MarkSceneDirty(scene);
-            Debug.Log("[GeometricStrategy] MVP scene generated. Save the scene, then enter Play Mode. Left click selects units; right click moves them; Tab switches Player One / Player Two control.");
+            Debug.Log("[GeometricStrategy] Playable top-down prototype generated. Left click selects, right click moves, Tab switches players. HUD shows resources, HP, level and objective.");
         }
 
         private static void CreateCamera(Transform parent)
@@ -119,12 +122,12 @@ namespace GeometricStrategy.Editor
 
         private static void CreatePlayerArmy(Transform parent, FactionId faction, float side)
         {
-            float x = 7.6f * side;
+            float x = 7.4f * side;
             CreateUnit(parent, faction, UnitArchetype.King, UnitLevel.Level1, new Vector2(x, 0f), false);
-            CreateUnit(parent, faction, UnitArchetype.Soldier, UnitLevel.Level1, new Vector2(6.0f * side, 0f), false);
-            CreateUnit(parent, faction, UnitArchetype.Soldier, UnitLevel.Level1, new Vector2(6.0f * side, 1.45f), false);
-            CreateUnit(parent, faction, UnitArchetype.Archer, UnitLevel.Level1, new Vector2(6.0f * side, 2.9f), false);
-            CreateUnit(parent, faction, UnitArchetype.Cavalry, UnitLevel.Level1, new Vector2(6.0f * side, -1.8f), false);
+            CreateUnit(parent, faction, UnitArchetype.Soldier, UnitLevel.Level1, new Vector2(5.8f * side, 0f), false);
+            CreateUnit(parent, faction, UnitArchetype.Soldier, UnitLevel.Level1, new Vector2(5.8f * side, 1.55f), false);
+            CreateUnit(parent, faction, UnitArchetype.Archer, UnitLevel.Level1, new Vector2(5.8f * side, 3.1f), false);
+            CreateUnit(parent, faction, UnitArchetype.Cavalry, UnitLevel.Level1, new Vector2(5.8f * side, -1.8f), false);
         }
 
         private static GeometricUnit CreateRaider(Transform parent, FactionId faction, UnitArchetype archetype, UnitLevel level, Vector2 position)
@@ -155,7 +158,7 @@ namespace GeometricStrategy.Editor
             go.transform.position = position;
 
             GeometricShapeRenderer shape = go.AddComponent<GeometricShapeRenderer>();
-            shape.Configure(ProfessionSymbol(profession), ProfessionColor(profession), 0.48f);
+            shape.Configure(ProfessionSymbol(profession), ProfessionColor(profession), 0.56f);
 
             ProfessionWorker worker = go.AddComponent<ProfessionWorker>();
             worker.Configure(profession, economy.wallet, economy.crafting, resource, economy.livestock, AnimalType.Horse);

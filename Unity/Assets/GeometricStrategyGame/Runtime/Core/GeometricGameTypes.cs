@@ -43,6 +43,14 @@ namespace GeometricStrategy
         Horse
     }
 
+    public enum AnimalType
+    {
+        Horse,
+        Sheep,
+        Cow,
+        Chicken
+    }
+
     public enum ProfessionType
     {
         Blacksmith,
@@ -199,9 +207,19 @@ namespace GeometricStrategy
             return faction == FactionId.PlayerOne || faction == FactionId.PlayerTwo;
         }
 
+        public static bool IsRaiderFaction(FactionId faction)
+        {
+            return faction == FactionId.WolfClan || faction == FactionId.BearClan || faction == FactionId.EagleClan;
+        }
+
         public static bool AreEnemies(FactionId a, FactionId b)
         {
             if (a == FactionId.Neutral || b == FactionId.Neutral || a == b)
+                return false;
+
+            // Initial computer raider clans share a common goal: attack the two player factions.
+            // This can later be replaced with a diplomacy matrix if raider-vs-raider warfare is desired.
+            if (IsRaiderFaction(a) && IsRaiderFaction(b))
                 return false;
 
             return true;

@@ -125,13 +125,13 @@ namespace GeometricStrategy
         {
             switch (level)
             {
-                case UnitLevel.Level1: return new Color32(255, 221, 0, 255);
-                case UnitLevel.Level2: return new Color32(255, 136, 0, 255);
-                case UnitLevel.Level3: return new Color32(220, 45, 45, 255);
-                case UnitLevel.Level4: return new Color32(140, 65, 190, 255);
-                case UnitLevel.Level5: return new Color32(60, 175, 80, 255);
-                case UnitLevel.Level6: return new Color32(90, 190, 245, 255);
-                case UnitLevel.Level7: return new Color32(15, 70, 180, 255);
+                case UnitLevel.Level1: return GeometricPalette.Level1Yellow;
+                case UnitLevel.Level2: return GeometricPalette.Level2Orange;
+                case UnitLevel.Level3: return GeometricPalette.Level3Red;
+                case UnitLevel.Level4: return GeometricPalette.Level4Purple;
+                case UnitLevel.Level5: return GeometricPalette.Level5Green;
+                case UnitLevel.Level6: return GeometricPalette.Level6LightBlue;
+                case UnitLevel.Level7: return GeometricPalette.Level7DeepBlue;
                 default: return Color.white;
             }
         }
@@ -140,13 +140,13 @@ namespace GeometricStrategy
         {
             switch (type)
             {
-                case ResourceType.Wood: return new Color32(46, 160, 67, 255);
-                case ResourceType.Stone: return new Color32(125, 125, 125, 255);
-                case ResourceType.Metal: return new Color32(120, 72, 42, 255);
-                case ResourceType.Gold: return new Color32(235, 190, 30, 255);
-                case ResourceType.Coin: return new Color32(255, 210, 55, 255);
-                case ResourceType.Food: return new Color32(180, 210, 75, 255);
-                case ResourceType.Horse: return new Color32(150, 95, 55, 255);
+                case ResourceType.Wood: return GeometricPalette.WoodGreen;
+                case ResourceType.Stone: return GeometricPalette.StoneGray;
+                case ResourceType.Metal: return GeometricPalette.MetalBrown;
+                case ResourceType.Gold: return GeometricPalette.Gold;
+                case ResourceType.Coin: return GeometricPalette.Coin;
+                case ResourceType.Food: return GeometricPalette.Food;
+                case ResourceType.Horse: return GeometricPalette.Horse;
                 default: return Color.white;
             }
         }
@@ -217,8 +217,6 @@ namespace GeometricStrategy
             if (a == FactionId.Neutral || b == FactionId.Neutral || a == b)
                 return false;
 
-            // Initial computer raider clans share a common goal: attack the two player factions.
-            // This can later be replaced with a diplomacy matrix if raider-vs-raider warfare is desired.
             if (IsRaiderFaction(a) && IsRaiderFaction(b))
                 return false;
 

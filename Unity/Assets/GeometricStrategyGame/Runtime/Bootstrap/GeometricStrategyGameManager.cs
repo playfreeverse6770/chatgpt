@@ -7,8 +7,10 @@ namespace GeometricStrategy
     {
         private readonly List<GeometricUnit> units = new List<GeometricUnit>();
         private bool matchEnded;
+        private string resultMessage = string.Empty;
 
         public bool MatchEnded => matchEnded;
+        public string ResultMessage => resultMessage;
 
         private void Start()
         {
@@ -48,11 +50,14 @@ namespace GeometricStrategy
             if (!matchEnded && unit.IsKing && GeometricGameRules.IsPlayerFaction(unit.Faction))
             {
                 matchEnded = true;
+                FactionId winner = unit.Faction == FactionId.PlayerOne ? FactionId.PlayerTwo : FactionId.PlayerOne;
+                resultMessage = winner == FactionId.PlayerOne ? "PLAYER 1 WINS" : "PLAYER 2 WINS";
+
                 AudioCue cue = unit.Faction == FactionId.PlayerOne ? AudioCue.Defeat : AudioCue.Victory;
                 if (GeometricAudioService.Instance != null)
                     GeometricAudioService.Instance.Play(cue, unit.transform.position);
 
-                Debug.Log("[GeometricStrategy] King defeated: " + unit.Faction + ". Match ended.");
+                Debug.Log("[GeometricStrategy] King defeated: " + unit.Faction + ". " + resultMessage);
             }
         }
     }
